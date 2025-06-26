@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Porcentagem</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .calculator {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .tab-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculadora de Porcentagem</h1>
+    
+    <div class="calculator">
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="openTab('tab1')">X% de um valor</button>
+            <button class="tab-btn" onclick="openTab('tab2')">X é qual % de Y?</button>
+            <button class="tab-btn" onclick="openTab('tab3')">Aumento/Redução %</button>
+        </div>
+        
+        <!-- Tab 1: X% de um valor -->
+        <div id="tab1" class="tab-content active">
+            <h3>Calcular X% de um valor</h3>
+            <input type="number" id="percent1" placeholder="Digite a porcentagem (X%)">
+            <input type="number" id="value1" placeholder="Digite o valor total">
+            <button onclick="calculatePercentage()">Calcular</button>
+            <div id="result1" class="result"></div>
+        </div>
+        
+        <!-- Tab 2: X é qual % de Y -->
+        <div id="tab2" class="tab-content">
+            <h3>X é qual porcentagem de Y?</h3>
+            <input type="number" id="part" placeholder="Digite o valor parcial (X)">
+            <input type="number" id="whole" placeholder="Digite o valor total (Y)">
+            <button onclick="calculateWhatPercent()">Calcular</button>
+            <div id="result2" class="result"></div>
+        </div>
+        
+        <!-- Tab 3: Aumento/Redução % -->
+        <div id="tab3" class="tab-content">
+            <h3>Aumentar ou diminuir um valor em X%</h3>
+            <input type="number" id="originalValue" placeholder="Digite o valor original">
+            <input type="number" id="percentChange" placeholder="Digite a porcentagem (X%)">
+            <div>
+                <button onclick="increaseValue()" style="background-color: #27ae60;">Aumentar</button>
+                <button onclick="decreaseValue()" style="background-color: #e74c3c;">Diminuir</button>
+            </div>
+            <div id="result3" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Alternar entre abas
+        function openTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Tab 1: Calcular X% de um valor
+        function calculatePercentage() {
+            const percent = parseFloat(document.getElementById('percent1').value);
+            const value = parseFloat(document.getElementById('value1').value);
+            
+            if (isNaN(percent) || isNaN(value)) {
+                document.getElementById('result1').textContent = "Por favor, digite valores válidos.";
+                return;
+            }
+            
+            const result = (percent / 100) * value;
+            document.getElementById('result1').textContent = `${percent}% de ${value} = ${result.toFixed(2)}`;
+        }
+        
+        // Tab 2: X é qual % de Y
+        function calculateWhatPercent() {
+            const part = parseFloat(document.getElementById('part').value);
+            const whole = parseFloat(document.getElementById('whole').value);
+            
+            if (isNaN(part) || isNaN(whole) || whole === 0) {
+                document.getElementById('result2').textContent = "Por favor, digite valores válidos (Y não pode ser zero).";
+                return;
+            }
+            
+            const result = (part / whole) * 100;
+            document.getElementById('result2').textContent = `${part} é ${result.toFixed(2)}% de ${whole}`;
+        }
+        
+        // Tab 3: Aumentar valor em X%
+        function increaseValue() {
+            calculateChange(true);
+        }
+        
+        // Tab 3: Diminuir valor em X%
+        function decreaseValue() {
+            calculateChange(false);
+        }
+        
+        function calculateChange(isIncrease) {
+            const original = parseFloat(document.getElementById('originalValue').value);
+            const percent = parseFloat(document.getElementById('percentChange').value);
+            
+            if (isNaN(original) || isNaN(percent)) {
+                document.getElementById('result3').textContent = "Por favor, digite valores válidos.";
+                return;
+            }
+            
+            const change = original * (percent / 100);
+            const result = isIncrease ? original + change : original - change;
+            const operation = isIncrease ? "aumentado" : "reduzido";
+            
+            document.getElementById('result3').textContent = 
+                `${original} ${operation} em ${percent}% = ${result.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
